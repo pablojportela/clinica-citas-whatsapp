@@ -95,12 +95,12 @@ Paciente responde:
 
 ## Preguntas pendientes de validar con Carmen/Adolfo antes de construir
 
-- [ ] ¿Qué sistema usan hoy para gestionar citas (agenda física, Excel, software específico tipo Doctoralia/Clinicware)? ¿Se puede integrar o hay que sustituirlo?
-      → Usan un software específico para gestión médica de citas (no confirmado cuál exactamente). **Pendiente: identificar el software concreto** para saber si tiene API/exportación o si hay que trabajar en paralelo a él.
+- [x] ¿Qué sistema usan hoy para gestionar citas (agenda física, Excel, software específico tipo Doctoralia/Clinicware)? ¿Se puede integrar o hay que sustituirlo?
+      → **Clinic Cloud** (del grupo Doctoralia), con integración nativa bidireccional con Doctoralia. Buena noticia: Clinic Cloud ofrece conectores/API (usados hoy para contabilidad, TPV, laboratorios), así que en fase 2 es plausible integrarse directamente con la agenda real en vez de duplicarla — pendiente de confirmar el acceso/plan contratado y si incluye API para terceros.
 - [x] ¿Tienen ya un número de WhatsApp Business, o hay que darlo de alta?
-      → No. Carmen usa hoy WhatsApp personal/normal, no la API de WhatsApp Business. **Acción a lanzar pronto:** dar de alta un número de WhatsApp Business (Meta Cloud API o vía Twilio/360dialog) es paso obligatorio antes de cualquier automatización real (principio no negociable de protección de datos, ver más abajo) y puede tardar días en verificarse — conviene iniciarlo en paralelo al resto del proyecto.
-- [ ] Volumen real: ¿cuántas citas al mes? ¿Qué % aproximado de no-shows?
-      → Pendiente, Pablo está a la espera de este dato.
+      → Probablemente no — creemos que es un número de teléfono normal, no verificado como WhatsApp Business (a confirmar con certeza). **Acción a lanzar pronto:** dar de alta un número de WhatsApp Business (Meta Cloud API o vía Twilio/360dialog) es paso obligatorio antes de cualquier automatización real (principio no negociable de protección de datos, ver más abajo) y puede tardar días en verificarse — conviene iniciarlo en paralelo al resto del proyecto.
+- [x] Volumen real: ¿cuántas citas al mes? ¿Qué % aproximado de no-shows?
+      → **Más de 200 citas/mes** (~10/día laborable). % de no-shows aún sin dato concreto. Con este volumen y la mitad de la jornada de Carmen en WhatsApp, el caso de negocio para automatizar recordatorios y FAQ es sólido.
 - [x] ¿Cuántas horas a la semana dedica Carmen a WhatsApp con pacientes?
       → Aproximadamente la mitad de su jornada. Confirma que el problema tiene volumen real: justifica priorizar recordatorios y FAQ automatizadas.
 - [x] ¿Hay lista de espera hoy en algún formato, o habría que crearla desde cero?
@@ -118,5 +118,7 @@ Al inspeccionar la web (WordPress + Elementor, sin sistema de citas online — e
 - **Horario:** Mañanas L-V 08:30-13:30. Tardes L-J 17:00-20:00. **Viernes no abre por la tarde** (confirmado por Pablo).
 - **Contacto:** consultas@centromedicoveedor.es · Tel. 856 58 16 58 · WhatsApp (solo mensajes, no llamadas): 667868024
 - La web tiene un bloque de "horario de verano" oculto en el código con fechas de 2025 sin actualizar — recordatorio de que el contenido publicado no siempre está al día, conviene que Carmen confirme cualquier dato antes de usarlo en las FAQ automatizadas.
+
+**Estado (25/08/2026): las 6 preguntas originales están respondidas.** Quedan flecos menores por confirmar con Carmen (% de no-shows, acceso/API concreta de Clinic Cloud, si el WhatsApp es realmente personal o ya alguna variante Business) antes de diseñar la primera integración real. El siguiente paso natural es un prototipo mínimo con datos ficticios, o seguir recopilando los horarios por profesional que Carmen va a ir facilitando.
 
 **Este documento es el punto de partida.** En cuanto Carmen confirme interés, la primera sesión de trabajo debería centrarse en responder las preguntas pendientes antes de escribir una sola línea de código.
