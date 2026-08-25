@@ -96,10 +96,18 @@ Paciente responde:
 ## Preguntas pendientes de validar con Carmen/Adolfo antes de construir
 
 - [ ] ¿Qué sistema usan hoy para gestionar citas (agenda física, Excel, software específico tipo Doctoralia/Clinicware)? ¿Se puede integrar o hay que sustituirlo?
-- [ ] ¿Tienen ya un número de WhatsApp Business, o hay que darlo de alta?
+      → Usan un software específico para gestión médica de citas (no confirmado cuál exactamente). **Pendiente: identificar el software concreto** para saber si tiene API/exportación o si hay que trabajar en paralelo a él.
+- [x] ¿Tienen ya un número de WhatsApp Business, o hay que darlo de alta?
+      → No. Carmen usa hoy WhatsApp personal/normal, no la API de WhatsApp Business. **Acción a lanzar pronto:** dar de alta un número de WhatsApp Business (Meta Cloud API o vía Twilio/360dialog) es paso obligatorio antes de cualquier automatización real (principio no negociable de protección de datos, ver más abajo) y puede tardar días en verificarse — conviene iniciarlo en paralelo al resto del proyecto.
 - [ ] Volumen real: ¿cuántas citas al mes? ¿Qué % aproximado de no-shows?
-- [ ] ¿Cuántas horas a la semana dedica Carmen a WhatsApp con pacientes?
-- [ ] ¿Hay lista de espera hoy en algún formato, o habría que crearla desde cero?
-- [ ] ¿Qué tipo de clínica es exactamente (afecta a qué preguntas frecuentes son relevantes y al nivel de sensibilidad de los datos)?
+      → Pendiente, Pablo está a la espera de este dato.
+- [x] ¿Cuántas horas a la semana dedica Carmen a WhatsApp con pacientes?
+      → Aproximadamente la mitad de su jornada. Confirma que el problema tiene volumen real: justifica priorizar recordatorios y FAQ automatizadas.
+- [x] ¿Hay lista de espera hoy en algún formato, o habría que crearla desde cero?
+      → No existe en ningún formato. Habría que crearla desde cero (lista de pacientes interesados en adelantar cita, por especialidad/profesional).
+- [x] ¿Qué tipo de clínica es exactamente (afecta a qué preguntas frecuentes son relevantes y al nivel de sensibilidad de los datos)?
+      → Clínica de salud privada con varias especialidades médicas.
+
+**Dato nuevo (no estaba en la lista original):** cada profesional de la clínica tiene sus propios tiempos de consulta y días de la semana en los que atiende. Carmen irá facilitando esta información poco a poco. Esto afecta directamente al modelo de datos: la agenda no es única, sino por profesional (horario, duración de consulta y disponibilidad propios), y las citas y recordatorios deben calcularse en función de ese calendario individual.
 
 **Este documento es el punto de partida.** En cuanto Carmen confirme interés, la primera sesión de trabajo debería centrarse en responder las preguntas pendientes antes de escribir una sola línea de código.
