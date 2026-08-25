@@ -125,6 +125,12 @@ Al inspeccionar la web (WordPress + Elementor, sin sistema de citas online — e
 
 Investigación detallada sobre cómo funciona la plataforma, qué está permitido tras el cambio de política de Meta de enero 2026, y qué proveedor conviene (Meta directo / 360dialog / Twilio): ver [`docs/whatsapp-business.md`](docs/whatsapp-business.md).
 
+## Flujo de reservas multicanal (WhatsApp + web + panel)
+
+Diseño de cómo un mismo motor de reservas atiende peticiones de cita/cancelación vengan de WhatsApp, del formulario web o del propio panel de Carmen, sin duplicar lógica ni desincronizar estados: ver [`docs/flujo-reservas.md`](docs/flujo-reservas.md).
+
+**Antes de construir esta parte:** validar en persona con Carmen (o pedirle vídeos/capturas de pantalla) cómo gestiona hoy estos mismos casos en Clinic Cloud y WhatsApp — qué mira para decidir un hueco, qué le preguntan más los pacientes, dónde pierde más tiempo. Mejor observar su proceso real que suponerlo.
+
 ## Prototipo mínimo (datos ficticios)
 
 Primer prototipo para validar el flujo completo (agenda por profesional, recordatorios simulados, cancelación → oferta automática a lista de espera, bandeja de mensajes escalados a Carmen, métricas). Todos los pacientes y citas son **inventados** — nunca usar datos reales de pacientes en este prototipo.
