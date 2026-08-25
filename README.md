@@ -110,4 +110,13 @@ Paciente responde:
 
 **Dato nuevo (no estaba en la lista original):** cada profesional de la clínica tiene sus propios tiempos de consulta y días de la semana en los que atiende. Carmen irá facilitando esta información poco a poco. Esto afecta directamente al modelo de datos: la agenda no es única, sino por profesional (horario, duración de consulta y disponibilidad propios), y las citas y recordatorios deben calcularse en función de ese calendario individual.
 
+**Datos de contacto/horario — verificación desde la web (centromedicoveedor.es):**
+
+Al inspeccionar la web (WordPress + Elementor, sin sistema de citas online — el formulario de contacto solo envía nombre/email/mensaje a Carmen/Adolfo) se detectó una discrepancia entre lo indexado en buscadores y el HTML real de la página de contacto:
+
+- **Dirección:** C/ Cervantes, 9, 11001 Cádiz (confirmado como correcto en el HTML en vivo). *Ojo: los resultados de búsqueda daban otra distinta (C. Veedor, 12, 11003 Cádiz) — no usar esa.*
+- **Horario:** Mañanas L-V 08:30-13:30. Tardes L-J 17:00-20:00. **Viernes no abre por la tarde** (confirmado por Pablo).
+- **Contacto:** consultas@centromedicoveedor.es · Tel. 856 58 16 58 · WhatsApp (solo mensajes, no llamadas): 667868024
+- La web tiene un bloque de "horario de verano" oculto en el código con fechas de 2025 sin actualizar — recordatorio de que el contenido publicado no siempre está al día, conviene que Carmen confirme cualquier dato antes de usarlo en las FAQ automatizadas.
+
 **Este documento es el punto de partida.** En cuanto Carmen confirme interés, la primera sesión de trabajo debería centrarse en responder las preguntas pendientes antes de escribir una sola línea de código.
