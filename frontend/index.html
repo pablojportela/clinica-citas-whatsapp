@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Panel de la clínica — prototipo</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    background: #f4f6f8;
+    color: #1c2733;
+  }
+  header {
+    background: #1c6e5f;
+    color: white;
+    padding: 1rem 1.5rem;
+  }
+  header h1 { margin: 0; font-size: 1.25rem; }
+  header p { margin: 0.25rem 0 0; opacity: 0.85; font-size: 0.85rem; }
+  nav {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    border-bottom: 1px solid #dfe4e8;
+  }
+  nav button {
+    border: none;
+    background: transparent;
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #445;
+  }
+  nav button.activa { background: #e5f2ee; color: #1c6e5f; font-weight: 600; }
+  main { padding: 1.5rem; max-width: 1000px; margin: 0 auto; }
+  section { display: none; }
+  section.activa { display: block; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  th, td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid #eef1f3; font-size: 0.9rem; }
+  th { background: #fafbfc; color: #667; font-weight: 600; }
+  .estado { padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+  .estado-confirmada { background: #e3f6ea; color: #1c8a4c; }
+  .estado-pendiente { background: #fff4dd; color: #9a6b00; }
+  .estado-cancelada { background: #fbe6e6; color: #b13030; }
+  .estado-no_show { background: #eee; color: #666; }
+  .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+  .metrica { background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .metrica .valor { font-size: 1.6rem; font-weight: 700; color: #1c6e5f; }
+  .metrica .etiqueta { font-size: 0.8rem; color: #667; }
+  button.accion { background: #1c6e5f; color: white; border: none; padding: 0.35rem 0.7rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+  .vacio { color: #889; font-style: italic; padding: 1rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Centro Médico Veedor — Panel (prototipo, datos ficticios)</h1>
+  <p>Carmen ve todo, decide las excepciones. El sistema nunca actúa a sus espaldas.</p>
+</header>
+
+<nav>
+  <button data-tab="agenda" class="activa">Agenda de hoy</button>
+  <button data-tab="bandeja">Bandeja de mensajes</button>
+  <button data-tab="espera">Lista de espera</button>
+  <button data-tab="metricas">Métricas</button>
+</nav>
+
+<main>
+  <section id="agenda" class="activa">
+    <table>
+      <thead><tr><th>Hora</th><th>Paciente</th><th>Profesional</th><th>Estado</th><th></th></tr></thead>
+      <tbody id="agenda-body"></tbody>
+    </table>
+  </section>
+
+  <section id="bandeja">
+    <table>
+      <thead><tr><th>Paciente</th><th>Mensaje</th><th></th></tr></thead>
+      <tbody id="bandeja-body"></tbody>
+    </table>
+  </section>
+
+  <section id="espera">
+    <table>
+      <thead><tr><th>Paciente</th><th>Especialidad</th><th>Estado</th></tr></thead>
+      <tbody id="espera-body"></tbody>
+    </table>
+  </section>
+
+  <section id="metricas">
+    <div class="metricas" id="metricas-body"></div>
+  </section>
+</main>
+
+<script>
+const tabs = document.querySelectorAll("nav button");
+const secciones = document.querySelectorAll("main section");
+tabs.forEach(btn => btn.addEventListener("click", () => {
+  tabs.forEach(b => b.classList.remove("activa"));
+  secciones.forEach(s => s.classList.remove("activa"));
+  btn.classList.add("activa");
+  document.getElementById(btn.dataset.tab).classList.add("activa");
+}));
+
+async function cargarAgenda() {
+  const res = await fetch("/api/agenda");
+  const citas = await res.json();
+  const cuerpo = document.getElementById("agenda-body");
+  cuerpo.innerHTML = citas.length ? "" : '<tr><td colspan="5" class="vacio">Sin citas hoy</td></tr>';
+  citas.forEach(c => {
+    const hora = new Date(c.fecha_hora).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${hora}</td>
+      <td>${c.paciente}</td>
+      <td>${c.profesional}</td>
+      <td><span class="estado estado-${c.estado}">${c.estado}</span></td>
+      <td>${c.estado !== "cancelada" ? `<button class="accion" onclick="cancelarCita(${c.id})">Cancelar</button>` : ""}</td>
+    `;
+    cuerpo.appendChild(fila);
+  });
+}
+
+async function cancelarCita(id) {
+  const res = await fetch(`/api/citas/${id}/cancelar`, { method: "POST" });
+  const data = await res.json();
+  alert(data.oferta_lista_espera_enviada
+    ? "Cita cancelada. Se ha ofrecido el hueco al primer paciente de la lista de espera."
+    : "Cita cancelada. No había nadie en lista de espera para esa especialidad.");
+  cargarAgenda();
+  cargarEspera();
+}
+
+async function cargarBandeja() {
+  const res = await fetch("/api/bandeja");
+  const mensajes = await res.json();
+  const cuerpo = document.getElementById("bandeja-body");
+  cuerpo.innerHTML = mensajes.length ? "" : '<tr><td colspan="3" class="vacio">Sin mensajes pendientes de revisión</td></tr>';
+  mensajes.forEach(m => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${m.paciente}<br><small>${m.telefono}</small></td>
+      <td>${m.texto}</td>
+      <td><button class="accion" onclick="resolverMensaje(${m.id})">Marcar resuelto</button></td>
+    `;
+    cuerpo.appendChild(fila);
+  });
+}
+
+async function resolverMensaje(id) {
+  await fetch(`/api/bandeja/${id}/resolver`, { method: "POST" });
+  cargarBandeja();
+}
+
+async function cargarEspera() {
+  const res = await fetch("/api/lista-espera");
+  const items = await res.json();
+  const cuerpo = document.getElementById("espera-body");
+  cuerpo.innerHTML = items.length ? "" : '<tr><td colspan="3" class="vacio">Lista de espera vacía</td></tr>';
+  items.forEach(e => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `<td>${e.paciente}</td><td>${e.especialidad}</td><td>${e.atendido ? "Hueco ofrecido" : "Esperando"}</td>`;
+    cuerpo.appendChild(fila);
+  });
+}
+
+async function cargarMetricas() {
+  const res = await fetch("/api/metricas");
+  const m = await res.json();
+  const etiquetas = {
+    total_citas: "Citas totales",
+    no_shows: "No-shows",
+    citas_canceladas: "Citas canceladas",
+    huecos_recuperados_lista_espera: "Huecos recuperados",
+    mensajes_gestionados_automaticamente: "Mensajes automáticos",
+    mensajes_escalados_total: "Mensajes escalados",
+    mensajes_escalados_pendientes: "Escalados pendientes",
+  };
+  const cont = document.getElementById("metricas-body");
+  cont.innerHTML = "";
+  Object.entries(etiquetas).forEach(([clave, etiqueta]) => {
+    const div = document.createElement("div");
+    div.className = "metrica";
+    div.innerHTML = `<div class="valor">${m[clave]}</div><div class="etiqueta">${etiqueta}</div>`;
+    cont.appendChild(div);
+  });
+}
+
+cargarAgenda();
+cargarBandeja();
+cargarEspera();
+cargarMetricas();
+</script>
+</body>
+</html>

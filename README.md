@@ -119,6 +119,27 @@ Al inspeccionar la web (WordPress + Elementor, sin sistema de citas online — e
 - **Contacto:** consultas@centromedicoveedor.es · Tel. 856 58 16 58 · WhatsApp (solo mensajes, no llamadas): 667868024
 - La web tiene un bloque de "horario de verano" oculto en el código con fechas de 2025 sin actualizar — recordatorio de que el contenido publicado no siempre está al día, conviene que Carmen confirme cualquier dato antes de usarlo en las FAQ automatizadas.
 
-**Estado (25/08/2026): las 6 preguntas originales están respondidas.** Quedan flecos menores por confirmar con Carmen (% de no-shows, acceso/API concreta de Clinic Cloud, si el WhatsApp es realmente personal o ya alguna variante Business) antes de diseñar la primera integración real. El siguiente paso natural es un prototipo mínimo con datos ficticios, o seguir recopilando los horarios por profesional que Carmen va a ir facilitando.
+**Estado (25/08/2026): las 6 preguntas originales están respondidas.** Quedan flecos menores por confirmar con Carmen (% de no-shows, acceso/API concreta de Clinic Cloud, si el WhatsApp es realmente personal o ya alguna variante Business) antes de diseñar la primera integración real.
+
+## WhatsApp Business — guía técnica
+
+Investigación detallada sobre cómo funciona la plataforma, qué está permitido tras el cambio de política de Meta de enero 2026, y qué proveedor conviene (Meta directo / 360dialog / Twilio): ver [`docs/whatsapp-business.md`](docs/whatsapp-business.md).
+
+## Prototipo mínimo (datos ficticios)
+
+Primer prototipo para validar el flujo completo (agenda por profesional, recordatorios simulados, cancelación → oferta automática a lista de espera, bandeja de mensajes escalados a Carmen, métricas). Todos los pacientes y citas son **inventados** — nunca usar datos reales de pacientes en este prototipo.
+
+El envío de WhatsApp está simulado (`backend/app/whatsapp_mock.py` solo registra en base de datos y hace `print`) porque todavía no existe un número de WhatsApp Business real — se sustituye por la llamada real a la Cloud API cuando el número esté verificado (ver guía de arriba).
+
+**Cómo ejecutarlo:**
+
+```bash
+python3 -m venv venv && source venv/bin/activate
+pip install -r backend/requirements.txt
+python -m backend.app.seed          # genera clinica.db con datos ficticios
+uvicorn backend.app.main:app --reload
+```
+
+Abrir `http://127.0.0.1:8000` — panel con pestañas de Agenda, Bandeja de mensajes, Lista de espera y Métricas. La API REST está bajo `/api/*` (agenda, citas, cancelar cita, lista de espera, bandeja, métricas).
 
 **Este documento es el punto de partida.** En cuanto Carmen confirme interés, la primera sesión de trabajo debería centrarse en responder las preguntas pendientes antes de escribir una sola línea de código.
